@@ -1,24 +1,70 @@
-import React, { useCallback, useState } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import React, { useCallback, useEffect, useState } from 'react';
+import axios from 'axios';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { useAuthContext } from './context/AuthContext';
 import Home from './pages/Home';
 import Join from './pages/Join';
 import Login from './pages/Login';
 import User from './pages/User';
 
 function App() {
+  const history = useHistory();
   // @ts-ignore
-  // const [authStore, authDispatch] = useAuthContext();
+  const [, authDispatch] = useAuthContext();
+  const [loading, setLoading] = useState(true);
+
+  const sessionLogin = useCallback(async () => {
+    try {
+      const response = await axios.post('/auth/login');
+      console.log('로그인 결과', response.data);
+      authDispatch({ type: 'LOGIN', payload: response.data });
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
+      return;
+      // return history.push('/');
+    } catch (error) {
+      // console.log('세션로그인 에러', error);
+      setLoading(false);
+      return;
+    }
+  }, [authDispatch]);
+
+  // useEffect(() => {
+  //   sessionLogin();
+  // }, [sessionLogin]);
+  // // 임시
+  // useEffect(() => {
+  //   authDispatch({
+  //     type: 'LOGIN',
+  //     payload: {
+  //       name: '테스트이름',
+  //       user_id: 'testID',
+  //       country: 'KR',
+  //       follower: [],
+  //       following: ['NASA'],
+  //       header: null,
+  //       photo: {
+  //         key: 'uvAOVS9p.jpg',
+  //         url: 'https://twitterclonetest.s3.ap-northeast-2.amazonaws.com/uvAOVS9p.jpg',
+  //       },
+  //       description: '',
+  //     },
+  //   });
+  //   console.log('임시 로그인');
+  //   setLoading(false);
+  // }, [authDispatch]);
+
+  // if (loading) return <></>;
 
   return (
-    <AuthProvider>
-      <Switch>
-        <Route path="/status/:user" component={User} />
-        <Route path="/login" component={Login} />
-        <Route path="/join" component={Join} />
-        <Route path="/" component={Home} />
-      </Switch>
-    </AuthProvider>
+    <Switch>
+      <Route path="/" component={Home} exact />
+      <Route path="/status/:user" component={User} exact />
+      <Route path="/login" component={Login} exact />
+      <Route path="/join" component={Join} exact />
+    </Switch>
   );
 }
 

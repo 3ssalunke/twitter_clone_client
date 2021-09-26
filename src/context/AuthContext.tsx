@@ -10,7 +10,7 @@ interface IUserProps {
     follower: string[];
     following: string[];
     header: IMedia | null;
-    photo: IMedia | null;
+    photo: IMedia;
     description: string;
   };
 }
@@ -22,7 +22,7 @@ const initialState: IUserProps = {
     follower: [],
     following: [],
     header: null,
-    photo: null,
+    photo: { key: '', url: '' },
     description: '',
   },
 };

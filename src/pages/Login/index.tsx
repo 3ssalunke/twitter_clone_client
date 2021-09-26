@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { useState, useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from '../../assets/Logo blue.svg';
 import AuthButton from '../../components/AuthButton';
@@ -27,10 +29,12 @@ const LogoSvg = styled.img`
 `;
 
 export default function Login() {
+  const history = useHistory();
   const [email, seEmail] = useState('');
   const [password, setPassword] = useState('');
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
+  const [loading, setLoading] = useState(true);
 
   const inputUserId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     seEmail(e.target.value);
@@ -42,31 +46,31 @@ export default function Login() {
     []
   );
   const onSubmit = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
-      authDispatch({
-        type: 'LOGIN',
-        payload: {
-          name: '테스트이름',
-          user_id: 'testID',
-          country: 'KR',
-          follower: [],
-          following: ['NASA'],
-          header: null,
-          photo: {
-            key: '0ZxKlEKB.jpg',
-            url: 'https://twitterclonetest.s3.ap-northeast-2.amazonaws.com/0ZxKlEKB.jpg',
-          },
-          description: '',
-        },
-      });
+      try {
+        const response = await axios.post('/auth/login', { email, password });
+        console.log('response', response.data);
+        authDispatch({ type: 'LOGIN', payload: response.data });
+
+        return history.push('/');
+      } catch (error) {
+        console.log('에러', error);
+        return;
+      }
     },
-    [authDispatch]
+    [authDispatch, email, history, password]
   );
 
   useEffect(() => {
-    console.log('로그인 후: ', authStore);
-  }, [authStore]);
+    if (authStore?.isLogin) {
+      history.push('/');
+    } else {
+      setLoading(false);
+    }
+  }, [authStore, history]);
+
+  if (loading) return <></>;
 
   return (
     <Container>
