@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { useAuthContext } from './context/AuthContext';
 import Home from './pages/Home';
 import Join from './pages/Join';
@@ -16,8 +15,8 @@ function App() {
 
   const sessionLogin = useCallback(async () => {
     try {
-      const response = await axios.post('/auth/login');
-      console.log('로그인 결과', response.data);
+      const response = await axios.post('/auth/token-refresh');
+      console.log('토큰 로그인 결과', response.data);
       authDispatch({ type: 'LOGIN', payload: response.data });
       setTimeout(() => {
         setLoading(false);
@@ -31,9 +30,9 @@ function App() {
     }
   }, [authDispatch]);
 
-  // useEffect(() => {
-  //   sessionLogin();
-  // }, [sessionLogin]);
+  useEffect(() => {
+    sessionLogin();
+  }, [sessionLogin]);
   // // 임시
   // useEffect(() => {
   //   authDispatch({
