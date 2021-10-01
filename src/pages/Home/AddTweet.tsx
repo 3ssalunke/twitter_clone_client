@@ -2,9 +2,7 @@ import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Button } from 'reactstrap';
 import styled from 'styled-components';
-import AuthInput from '../../components/AuthInput';
 import ProfileImage from '../../components/ProfileImage';
-import { useAuthContext } from '../../context/AuthContext';
 
 const Container = styled.div`
   position: relative;
@@ -56,8 +54,6 @@ const SubmitButton = styled(Button)`
 
 export default function AddTweet({ profile }: { profile: string }) {
   const [contents, setContents] = useState('');
-  // @ts-ignore
-  const [authStore, authDispatch] = useAuthContext();
 
   const inputContents = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,14 +62,21 @@ export default function AddTweet({ profile }: { profile: string }) {
     []
   );
   // 트윗 아이디 만들기. getTime 하고 유저아이디 결합하기?
-  const createRandomTweetId = useCallback(() => {}, []);
+  const createRandomTweetId = useCallback(() => {
+    const time: number = new Date().getTime();
+    // 출처: https://stackoverflow.com/a/21816629
+    const randomNumber: number = Math.floor(Math.random() * 899999 + 100000);
+    return parseInt(`${time}${randomNumber}`);
+  }, []);
   const onSubmit = useCallback(async () => {
     try {
-      const response = await axios.post('/tweet/create');
+      const tweet_id = createRandomTweetId();
+      await axios.post('/tweet/create', { tweet_id, contents });
+      return;
     } catch (error) {
       console.log('트윗 등록 에러', error);
     }
-  }, [contents]);
+  }, [contents, createRandomTweetId]);
 
   return (
     <Container>
@@ -87,7 +90,7 @@ export default function AddTweet({ profile }: { profile: string }) {
             onChange={inputContents}
             maxLength={140}
           />
-          <SubmitButton>
+          <SubmitButton onClick={onSubmit}>
             <p>트윗하기</p>
           </SubmitButton>
         </ContentsArea>
