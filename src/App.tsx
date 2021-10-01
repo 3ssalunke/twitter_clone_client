@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { useAuthContext } from './context/AuthContext';
 import Home from './pages/Home';
 import Join from './pages/Join';
 import Login from './pages/Login';
 import User from './pages/User';
+import Main from './pages/Main';
 
 function App() {
-  const history = useHistory();
   // @ts-ignore
   const [, authDispatch] = useAuthContext();
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,6 @@ function App() {
         setLoading(false);
       }, 100);
       return;
-      // return history.push('/');
     } catch (error) {
       // console.log('세션로그인 에러', error);
       setLoading(false);
@@ -59,7 +58,8 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/" component={Home} exact />
+      <Route path="/" component={Main} exact />
+      <Route path="/home" component={Home} exact />
       <Route path="/status/:user" component={User} exact />
       <Route path="/login" component={Login} exact />
       <Route path="/join" component={Join} exact />
