@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { Button } from 'reactstrap';
 import styled from 'styled-components';
 import ProfileImage from '../../components/ProfileImage';
+import createRandomTweetId from '../../util/createRandomTweetId';
 
 const Container = styled.div`
   position: relative;
@@ -61,13 +62,6 @@ export default function AddTweet({ profile }: { profile: string }) {
     },
     []
   );
-  // 트윗 아이디 만들기. getTime 하고 유저아이디 결합하기?
-  const createRandomTweetId = useCallback(() => {
-    const time: number = new Date().getTime();
-    // 출처: https://stackoverflow.com/a/21816629
-    const randomNumber: number = Math.floor(Math.random() * 899999 + 100000);
-    return parseInt(`${time}${randomNumber}`);
-  }, []);
   const onSubmit = useCallback(async () => {
     try {
       const tweet_id = createRandomTweetId();
@@ -76,7 +70,7 @@ export default function AddTweet({ profile }: { profile: string }) {
     } catch (error) {
       console.log('트윗 등록 에러', error);
     }
-  }, [contents, createRandomTweetId]);
+  }, [contents]);
 
   return (
     <Container>
