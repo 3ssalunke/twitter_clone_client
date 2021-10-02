@@ -1,4 +1,7 @@
-import IMedia from './IMedia';
+export interface IMedia {
+  key: string;
+  url: string;
+}
 
 interface IUser {
   name: string;
@@ -9,10 +12,9 @@ interface IUser {
   following: number;
 }
 
-export default interface ISmallTweet {
-  user_id: string;
-  writer_id: string;
+export interface ITweet {
   tweet_id: number;
+  user_id: string;
   video: IMedia | null;
   image: IMedia[] | [];
   contents: string;
@@ -22,8 +24,9 @@ export default interface ISmallTweet {
   like: string[];
   like_count: number;
   comments: string[];
-  comments_count: number;
-  is_retweet: boolean;
-  register_date: string;
+  comments_count?: number;
+  is_retweet?: boolean;
+  register_date?: string;
+  is_active: boolean;
   user: IUser;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import ISmallTweet from '../../types/ISmallTweet';
+import { ITweet } from '../../types';
 import SmallTweet from './SmallTweet';
 
 const Container = styled.div`
@@ -11,7 +11,7 @@ const Container = styled.div`
 `;
 
 interface ITweetList {
-  data: ISmallTweet[];
+  data: ITweet[];
   user_id: string;
   isLogin: boolean;
 }

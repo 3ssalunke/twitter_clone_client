@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useContext } from 'react';
-import IMedia from '../types/IMedia';
+import { IMedia } from '../types';
 
 interface IUserProps {
   isLogin: boolean;

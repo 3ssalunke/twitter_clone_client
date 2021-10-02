@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import ISmallTweet from '../../types/ISmallTweet';
+import { ITweet } from '../../types';
 import TweetList from '../../components/Tweet/TweetList';
 import AddTweet from './AddTweet';
 import { useAuthContext } from '../../context/AuthContext';
@@ -18,11 +18,11 @@ const Container = styled.div`
 
 export default function Home() {
   const history = useHistory();
-  const [tweetList, setTweetList] = useState<ISmallTweet[]>([]);
+  const [tweetList, setTweetList] = useState<ITweet[]>([]);
   const [loading, setLoading] = useState(true);
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
-
+  // useSWR?
   const getHomeTImeLine = useCallback(async () => {
     try {
       const response = await axios.get('/reading/home');
@@ -36,6 +36,7 @@ export default function Home() {
       return;
     }
   }, []);
+
   useEffect(() => {
     if (authStore.isLogin) {
       getHomeTImeLine();
