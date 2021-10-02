@@ -20,8 +20,12 @@ export default function Header({ isLogin }: { isLogin: boolean }) {
         <LogoutButton />
       ) : (
         <>
-          <LoginButton />
-          <JoinButton />
+          <>
+            <LoginButton />
+          </>
+          <div style={{ marginLeft: 5 }}>
+            <JoinButton />
+          </div>
         </>
       )}
     </Container>
