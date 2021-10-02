@@ -6,6 +6,8 @@ import { faComment } from '@fortawesome/free-regular-svg-icons';
 const Container = styled.div`
   position: relative;
   width: 100%;
+  z-index: 1;
+  text-align: center;
 `;
 
 const Icon = styled(FontAwesomeIcon)`
@@ -22,18 +24,21 @@ const CountWrapper = styled.div`
 
 interface IComment {
   comments: string[];
+  showCount: boolean;
 }
 
-export default function Comment({ comments }: IComment) {
+export default function Comment({ comments, showCount }: IComment) {
   const comments_count = useMemo(() => {
     return comments.length;
   }, [comments]);
   return (
     <Container>
       <Icon icon={faComment} />
-      <CountWrapper>
-        {comments_count > 0 ? <span>{comments_count}</span> : <></>}
-      </CountWrapper>
+      {showCount && (
+        <CountWrapper>
+          {comments_count > 0 ? <span>{comments_count}</span> : <></>}
+        </CountWrapper>
+      )}
     </Container>
   );
 }

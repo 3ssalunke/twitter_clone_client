@@ -6,6 +6,9 @@ import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 const Container = styled.div`
   position: relative;
   width: 100%;
+  z-index: 1;
+  text-align: center;
+  cursor: pointer;
 `;
 
 const Icon = styled(FontAwesomeIcon)`

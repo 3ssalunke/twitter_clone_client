@@ -7,6 +7,9 @@ import { faHeart as nonActiveHeart } from '@fortawesome/free-regular-svg-icons';
 const Container = styled.div`
   position: relative;
   width: 100%;
+  z-index: 1;
+  text-align: center;
+  cursor: pointer;
 `;
 
 const Icon = styled(FontAwesomeIcon)<{ isactive: boolean }>`
@@ -31,9 +34,15 @@ interface IHeartProps {
   user_id: string;
   like: string[];
   isLogin: boolean;
+  showCount: boolean;
 }
 
-export default function Heart({ user_id, like, isLogin }: IHeartProps) {
+export default function Heart({
+  user_id,
+  like,
+  isLogin,
+  showCount,
+}: IHeartProps) {
   const isActive = useMemo(() => {
     if (like.includes(user_id)) {
       return true;
@@ -58,9 +67,11 @@ export default function Heart({ user_id, like, isLogin }: IHeartProps) {
         icon={isActive ? activeHeart : nonActiveHeart}
         onClick={onChangeHeart}
       />
-      <CountWrapper>
-        {like_count > 0 ? <span>{like_count}</span> : <></>}
-      </CountWrapper>
+      {showCount && (
+        <CountWrapper>
+          {like_count > 0 ? <span>{like_count}</span> : <></>}
+        </CountWrapper>
+      )}
     </Container>
   );
 }
