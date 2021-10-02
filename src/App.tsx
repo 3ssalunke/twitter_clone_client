@@ -7,6 +7,7 @@ import Join from './pages/Join';
 import Login from './pages/Login';
 import User from './pages/User';
 import Main from './pages/Main';
+import Tweet from './pages/Tweet';
 
 function App() {
   // @ts-ignore
@@ -23,7 +24,6 @@ function App() {
       }, 100);
       return;
     } catch (error) {
-      // console.log('세션로그인 에러', error);
       setLoading(false);
       return;
     }
@@ -32,37 +32,17 @@ function App() {
   useEffect(() => {
     sessionLogin();
   }, [sessionLogin]);
-  // // 임시
-  // useEffect(() => {
-  //   authDispatch({
-  //     type: 'LOGIN',
-  //     payload: {
-  //       name: '테스트이름',
-  //       user_id: 'testID',
-  //       country: 'KR',
-  //       follower: [],
-  //       following: ['NASA'],
-  //       header: null,
-  //       photo: {
-  //         key: 'uvAOVS9p.jpg',
-  //         url: 'https://twitterclonetest.s3.ap-northeast-2.amazonaws.com/uvAOVS9p.jpg',
-  //       },
-  //       description: '',
-  //     },
-  //   });
-  //   console.log('임시 로그인');
-  //   setLoading(false);
-  // }, [authDispatch]);
 
-  // if (loading) return <></>;
+  if (loading) return <></>;
 
   return (
     <Switch>
       <Route path="/" component={Main} exact />
       <Route path="/home" component={Home} exact />
-      <Route path="/status/:user" component={User} exact />
       <Route path="/login" component={Login} exact />
       <Route path="/join" component={Join} exact />
+      <Route path="/:user" component={User} exact />
+      <Route path="/:user/status/:tweetid" component={Tweet} exact />
     </Switch>
   );
 }
