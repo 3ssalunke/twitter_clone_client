@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import ISmallTweet from '../../types/ISmallTweet';
+import { ITweet } from '../../types';
 import ProfileImage from '../ProfileImage';
-import ActionButtons from '../Buttons/ActionButtons';
+import Comment from '../Buttons/Comment';
+import Retweet from '../Buttons/Retweet';
+import Heart from '../Buttons/Heart';
+import Share from '../Buttons/Share';
 
 const Container = styled.div`
   position: relative;
   width: 100%;
   min-height: 100px;
+  z-index: 0;
+  cursor: pointer;
 `;
 
 const Wrapper = styled.div`
@@ -33,9 +39,19 @@ const UserName = styled.a`
 const UserId = styled.span`
   color: rgb(83, 100, 113);
 `;
+const ButtonWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 48px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0px 70px;
+`;
 
 interface ISmallTweetProps {
-  value: ISmallTweet;
+  value: ITweet;
   user_id: string;
   isLogin: boolean;
 }
@@ -46,11 +62,13 @@ export default function SmallTweet({
   user_id,
   isLogin,
 }: ISmallTweetProps) {
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
+  const history = useHistory();
+  const moveToDetailPage = useCallback(() => {
+    history.push(`/${value.user_id}/status/${value.tweet_id}`);
+    return;
+  }, [history, value]);
   return (
-    <Container>
+    <Container onClick={moveToDetailPage}>
       <Wrapper>
         {/* // @ts-ignore */}
         <ProfileImage size="small" imagePath={value.user.photo.url} />
@@ -69,13 +87,29 @@ export default function SmallTweet({
           </div>
         </ContentsArea>
       </Wrapper>
-      <ActionButtons
+      <ButtonWrapper>
+        <Comment comments={value.comments} showCount={true} />
+        <Retweet
+          retweet={value.retweet}
+          user_id={user_id}
+          isLogin={isLogin}
+          showCount={true}
+        />
+        <Heart
+          like={value.like}
+          user_id={user_id}
+          isLogin={isLogin}
+          showCount={true}
+        />
+        <Share />
+      </ButtonWrapper>
+      {/* <ActionButtons
         comments={value.comments}
         retweet={value.retweet}
         like={value.like}
         user_id={user_id}
         isLogin={isLogin}
-      />
+      /> */}
     </Container>
   );
 }
