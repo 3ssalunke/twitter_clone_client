@@ -2,12 +2,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 import { ITweet } from '../../types';
 import TweetList from '../../components/Tweet/TweetList';
 import AddTweet from './AddTweet';
 import { useAuthContext } from '../../context/AuthContext';
 import Header from '../../components/Header/Header';
-import axios from 'axios';
 
 const Container = styled.div`
   position: relative;
@@ -49,8 +49,11 @@ export default function Home() {
   return (
     <Container>
       <Header isLogin={authStore?.isLogin} />
-      {authStore?.isLogin && <AddTweet profile={authStore?.user?.photo?.url} />}
+      {/* {authStore?.isLogin && (
+        )} */}
+      <AddTweet profile_color={authStore?.user?.profile_color} />
       {/* @ts-ignore */}
+      {tweetList.length === 0 && <h5>타임라인에 트윗이 없습니다.</h5>}
       <TweetList
         data={tweetList}
         user_id={authStore?.user?.user_id}
