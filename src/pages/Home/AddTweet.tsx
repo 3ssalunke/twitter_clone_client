@@ -53,7 +53,7 @@ const SubmitButton = styled(Button)`
   }
 `;
 
-export default function AddTweet({ profile }: { profile: string }) {
+export default function AddTweet({ profile_color }: { profile_color: string }) {
   const [contents, setContents] = useState('');
 
   const inputContents = useCallback(
@@ -75,7 +75,7 @@ export default function AddTweet({ profile }: { profile: string }) {
   return (
     <Container>
       <Wrapper>
-        <ProfileImage size="small" imagePath={profile} />
+        <ProfileImage size="small" color={profile_color} />
         <ContentsArea>
           <Input
             value={contents}
