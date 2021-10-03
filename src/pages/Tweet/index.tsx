@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import { useAuthContext } from '../../context/AuthContext';
 import DetailTweet from '../../components/Tweet/DetailTweet';
 import { ITweet } from '../../types';
 import AddComment from './AddComment';
+import TweetList from '../../components/Tweet/TweetList';
 
 const Container = styled.div`
   position: relative;
@@ -41,10 +42,12 @@ export default function Tweet() {
     user: {
       name: '',
       user_id: '',
-      photo: { key: '', url: '' },
+      profile_color: '',
       description: '',
-      follower: 0,
-      following: 0,
+      follower: [],
+      following: [],
+      follower_count: 0,
+      following_count: 0,
     },
   });
   const [comments, setComments] = useState<ITweet[]>([]);
@@ -66,6 +69,12 @@ export default function Tweet() {
       return;
     }
   }, [params.tweetid]);
+  const history = useHistory();
+  const refreshComment = useCallback(() => {
+    // 답글을 작성한 후 실행합니다.
+    history.go(0);
+    return;
+  }, [history]);
 
   useEffect(() => {
     getDetailTweet();
@@ -91,9 +100,18 @@ export default function Tweet() {
           isLogin={authStore?.isLogin}
         />
         {authStore?.isLogin && (
-          <AddComment profile={authStore?.user?.photo?.url} />
+          <AddComment
+            profile_color={authStore?.user?.profile_color}
+            target_tweet_id={firstTweet.tweet_id}
+            refreshComment={refreshComment}
+          />
         )}
         {/* comments 에다 각각 작은트윗 불러오기 */}
+        <TweetList
+          data={comments}
+          user_id={authStore?.user?.user_id}
+          isLogin={authStore?.isLogin}
+        />
       </Wrapper>
     </Container>
   );
