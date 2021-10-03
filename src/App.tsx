@@ -41,7 +41,7 @@ function App() {
       <Route path="/home" component={Home} exact />
       <Route path="/login" component={Login} exact />
       <Route path="/join" component={Join} exact />
-      <Route path="/:user" component={User} exact />
+      <Route path="/:userid" component={User} exact />
       <Route path="/:user/status/:tweetid" component={Tweet} exact />
     </Switch>
   );
