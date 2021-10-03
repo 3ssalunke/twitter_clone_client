@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { useState, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from '../../assets/Logo blue.svg';
 import AuthButton from '../../components/AuthButton';
@@ -26,12 +28,17 @@ const LogoSvg = styled.img`
 `;
 
 export default function Join() {
+  const history = useHistory();
   const [userId, setUserId] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const inputUserId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUserId(e.target.value);
+  }, []);
+  const inputName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   }, []);
   const inputEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -42,9 +49,29 @@ export default function Join() {
     },
     []
   );
-  const onSubmit = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-  }, []);
+  const onSubmit = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      try {
+        await axios.post('/auth/join', {
+          email,
+          password,
+          name,
+          user_id: userId,
+        });
+        alert('회원 가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
+        history.push('/login');
+        return;
+      } catch (error: any) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        alert(error.response.data);
+        return;
+      }
+    },
+    [email, history, name, password, userId]
+  );
 
   return (
     <Container>
@@ -56,6 +83,12 @@ export default function Join() {
             value={userId}
             type="text"
             onChange={inputUserId}
+          />
+          <AuthInput
+            placeholder="이름을 입력하세요"
+            value={name}
+            type="text"
+            onChange={inputName}
           />
           <AuthInput
             placeholder="이메일를 입력하세요"
