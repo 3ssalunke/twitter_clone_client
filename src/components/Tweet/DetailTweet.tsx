@@ -10,7 +10,6 @@ import Share from '../Buttons/Share';
 const Container = styled.div`
   position: relative;
   width: 100%;
-  min-height: 250px;
   z-index: 0;
 `;
 
@@ -93,7 +92,11 @@ export default function DetailTweet({
     <Container>
       <Wrapper>
         <ProfileArea>
-          <ProfileImage size="small" imagePath={value.user.photo.url} />
+          <ProfileImage
+            size="small"
+            color={value.user.profile_color}
+            user_id={value.user.user_id}
+          />
           <div className="name-id-field" style={{ marginLeft: 10 }}>
             <div className="user_name">
               <UserName>{value.user.name}</UserName>

@@ -31,9 +31,8 @@ const ContentsArea = styled.div`
   position: relative;
   margin-left: 10px;
 `;
-const UserName = styled.a`
+const UserName = styled.span`
   color: black;
-  text-decoration: none;
   font-weight: bold;
 `;
 const UserId = styled.span`
@@ -48,6 +47,7 @@ const ButtonWrapper = styled.div`
   align-items: center;
   box-sizing: border-box;
   padding: 0px 70px;
+  border-bottom: 1px solid rgb(239, 243, 244);
 `;
 
 interface ISmallTweetProps {
@@ -71,7 +71,11 @@ export default function SmallTweet({
     <Container onClick={moveToDetailPage}>
       <Wrapper>
         {/* // @ts-ignore */}
-        <ProfileImage size="small" imagePath={value.user.photo.url} />
+        <ProfileImage
+          size="small"
+          color={value.user.profile_color}
+          user_id={value.user.user_id}
+        />
         <ContentsArea>
           <div
             className="user_name"
