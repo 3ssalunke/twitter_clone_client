@@ -27,6 +27,16 @@ const LogoSvg = styled.img`
   width: 80px;
   margin-bottom: 50px;
 `;
+const JoinWrapper = styled.div`
+  margin-top: 10px;
+  span {
+    cursor: pointer;
+    color: #1a0dab;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
 
 export default function Login() {
   const history = useHistory();
@@ -49,11 +59,15 @@ export default function Login() {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       try {
+        // const response = await axios.post('/auth/login', {
+        //   email: 'test@g.com',
+        //   password: '123',
+        // });
         const response = await axios.post('/auth/login', { email, password });
         console.log('response', response.data);
         authDispatch({ type: 'LOGIN', payload: response.data });
 
-        return history.push('/');
+        return history.push('/home');
       } catch (error) {
         console.log('에러', error);
         return;
@@ -62,9 +76,13 @@ export default function Login() {
     [authDispatch, email, history, password]
   );
 
+  const moveToJoin = useCallback(() => {
+    history.push('/join');
+  }, [history]);
+
   useEffect(() => {
     if (authStore?.isLogin) {
-      history.push('/');
+      history.push('/home');
     } else {
       setLoading(false);
     }
@@ -90,6 +108,9 @@ export default function Login() {
             onChange={inputPassword}
           />
           <AuthButton text="로그인" onClick={onSubmit} />
+          <JoinWrapper>
+            <span onClick={moveToJoin}>아이디가 없으신가요? 회원가입하기</span>
+          </JoinWrapper>
         </form>
       </WrapperDiv>
     </Container>
