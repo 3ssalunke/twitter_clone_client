@@ -3,13 +3,15 @@ export interface IMedia {
   url: string;
 }
 
-interface IUser {
+export interface IUser {
   name: string;
   user_id: string;
-  photo: IMedia;
+  profile_color: string;
   description: string;
-  follower: number;
-  following: number;
+  follower: string[];
+  following: string[];
+  follower_count: number;
+  following_count: number;
 }
 
 export interface ITweet {
