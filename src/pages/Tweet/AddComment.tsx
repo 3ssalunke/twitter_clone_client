@@ -52,8 +52,16 @@ const SubmitButton = styled(Button)`
     font-weight: bold;
   }
 `;
-
-export default function AddComment({ profile }: { profile: string }) {
+interface IAddCommentProp {
+  profile_color: string;
+  target_tweet_id: number;
+  refreshComment: () => void;
+}
+export default function AddComment({
+  profile_color,
+  target_tweet_id,
+  refreshComment,
+}: IAddCommentProp) {
   const [contents, setContents] = useState('');
 
   const inputContents = useCallback(
@@ -66,17 +74,21 @@ export default function AddComment({ profile }: { profile: string }) {
   const onSubmit = useCallback(async () => {
     try {
       const tweet_id = createRandomTweetId();
-      await axios.post('/tweet/create', { tweet_id, contents });
-      return;
+      await axios.post('/tweet/add-comment', {
+        tweet_id,
+        contents,
+        target_tweet_id,
+      });
+      return refreshComment();
     } catch (error) {
       console.log('답글 등록 에러', error);
     }
-  }, [contents]);
+  }, [contents, refreshComment, target_tweet_id]);
 
   return (
     <Container>
       <Wrapper>
-        <ProfileImage size="small" imagePath={profile} />
+        <ProfileImage size="small" color={profile_color} />
         <ContentsArea>
           <Input
             value={contents}
