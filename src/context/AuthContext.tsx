@@ -9,8 +9,7 @@ interface IUserProps {
     // join_date: string;
     follower: string[];
     following: string[];
-    header: IMedia | null;
-    photo: IMedia;
+    profile_color: string;
     description: string;
   };
 }
@@ -21,8 +20,7 @@ const initialState: IUserProps = {
     name: '',
     follower: [],
     following: [],
-    header: null,
-    photo: { key: '', url: '' },
+    profile_color: '#17517e',
     description: '',
   },
 };
@@ -47,7 +45,14 @@ const authReducer = (prevState, action) => {
     case 'LOGOUT': {
       return {
         isLogin: false,
-        user: {},
+        user: {
+          user_id: '',
+          name: '',
+          follower: [],
+          following: [],
+          profile_color: '#17517e',
+          description: '',
+        },
       };
     }
     default: {
