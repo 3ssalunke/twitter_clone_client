@@ -55,12 +55,12 @@ const SubmitButton = styled(Button)`
 interface IAddCommentProp {
   profile_color: string;
   target_tweet_id: number;
-  refreshComment: () => void;
+  onChangeTweet: any;
 }
 export default function AddComment({
   profile_color,
   target_tweet_id,
-  refreshComment,
+  onChangeTweet,
 }: IAddCommentProp) {
   const [contents, setContents] = useState('');
 
@@ -79,11 +79,17 @@ export default function AddComment({
         contents,
         target_tweet_id,
       });
-      return refreshComment();
-    } catch (error) {
-      console.log('답글 등록 에러', error);
+      onChangeTweet();
+      setContents('');
+      return;
+    } catch (error: any) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      alert(error.response.data);
+      return;
     }
-  }, [contents, refreshComment, target_tweet_id]);
+  }, [contents, onChangeTweet]);
 
   return (
     <Container>

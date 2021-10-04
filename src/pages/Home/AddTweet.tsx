@@ -53,7 +53,13 @@ const SubmitButton = styled(Button)`
   }
 `;
 
-export default function AddTweet({ profile_color }: { profile_color: string }) {
+export default function AddTweet({
+  profile_color,
+  onChangeTimeLine,
+}: {
+  profile_color: string;
+  onChangeTimeLine: any;
+}) {
   const [contents, setContents] = useState('');
 
   const inputContents = useCallback(
@@ -66,11 +72,17 @@ export default function AddTweet({ profile_color }: { profile_color: string }) {
     try {
       const tweet_id = createRandomTweetId();
       await axios.post('/tweet/create', { tweet_id, contents });
+      onChangeTimeLine();
+      setContents('');
       return;
-    } catch (error) {
-      console.log('트윗 등록 에러', error);
+    } catch (error: any) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      alert(error.response.data);
+      return;
     }
-  }, [contents]);
+  }, [contents, onChangeTimeLine]);
 
   return (
     <Container>
