@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRetweet } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const Container = styled.div`
   position: relative;
@@ -34,6 +35,8 @@ interface IRetweet {
   retweet: string[];
   isLogin: boolean;
   showCount: boolean;
+  tweet_id?: number;
+  onChangeTimeLine?: any;
 }
 
 export default function Retweet({
@@ -41,23 +44,46 @@ export default function Retweet({
   retweet,
   isLogin,
   showCount,
+  tweet_id,
+  onChangeTimeLine,
 }: IRetweet) {
   const isActive = useMemo(() => {
-    if (retweet.includes(user_id)) {
-      return true;
+    if (retweet) {
+      if (retweet.includes(user_id)) {
+        return true;
+      } else return false;
     } else return false;
   }, [user_id, retweet]);
   const retweet_count = useMemo(() => {
-    return retweet.length;
+    if (retweet) return retweet.length;
+    else return 0;
   }, [retweet]);
 
-  const onChangeRetweet = useCallback(() => {
-    if (!isLogin) {
-      alert('로그인 후 이용할 수 있습니다.');
-    } else {
-      console.log('test');
-    }
-  }, [isLogin]);
+  const onChangeRetweet = useCallback(
+    async (e: React.MouseEvent<SVGSVGElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isLogin) {
+        alert('로그인 후 이용할 수 있습니다.');
+        return;
+      }
+      try {
+        const apiUrl = isActive ? '/tweet/undo-retweet' : '/tweet/do-retweet';
+        await axios.patch(apiUrl, { tweet_id });
+
+        onChangeTimeLine();
+        return;
+      } catch (error: any) {
+        console.log(error);
+        console.log(error?.response?.data);
+        console.log(error?.response?.status);
+        console.log(error?.response?.headers);
+        alert(error?.response?.data);
+        return;
+      }
+    },
+    [isActive, isLogin, onChangeTimeLine, tweet_id]
+  );
 
   return (
     <Container>

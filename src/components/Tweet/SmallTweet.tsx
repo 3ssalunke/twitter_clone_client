@@ -54,6 +54,7 @@ interface ISmallTweetProps {
   value: ITweet;
   user_id: string;
   isLogin: boolean;
+  onChangeTimeLine?: any;
 }
 
 //@ts-ignore
@@ -61,6 +62,7 @@ export default function SmallTweet({
   value,
   user_id,
   isLogin,
+  onChangeTimeLine,
 }: ISmallTweetProps) {
   const history = useHistory();
   const moveToDetailPage = useCallback(() => {
@@ -98,22 +100,19 @@ export default function SmallTweet({
           user_id={user_id}
           isLogin={isLogin}
           showCount={true}
+          tweet_id={value.tweet_id}
+          onChangeTimeLine={onChangeTimeLine}
         />
         <Heart
           like={value.like}
           user_id={user_id}
           isLogin={isLogin}
           showCount={true}
+          tweet_id={value.tweet_id}
+          onChangeTimeLine={onChangeTimeLine}
         />
         <Share />
       </ButtonWrapper>
-      {/* <ActionButtons
-        comments={value.comments}
-        retweet={value.retweet}
-        like={value.like}
-        user_id={user_id}
-        isLogin={isLogin}
-      /> */}
     </Container>
   );
 }

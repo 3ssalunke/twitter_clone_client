@@ -14,16 +14,26 @@ interface ITweetList {
   data: ITweet[];
   user_id: string;
   isLogin: boolean;
+  onChangeTimeLine?: any;
 }
-//@ts-ignore
-export default function TweetList({ data, user_id, isLogin }: ITweetList) {
+//@ts-ignore {/* @ts-ignore */}
+export default function TweetList({
+  data,
+  user_id,
+  isLogin,
+  onChangeTimeLine,
+}: ITweetList) {
+  if (!data) return <Container></Container>;
   return (
     <Container>
-      {/* @ts-ignore */}
       {data.map((value, idx) => (
         <div key={idx}>
-          {/* @ts-ignore */}
-          <SmallTweet value={value} user_id={user_id} isLogin={isLogin} />
+          <SmallTweet
+            value={value}
+            user_id={user_id}
+            isLogin={isLogin}
+            onChangeTimeLine={onChangeTimeLine}
+          />
         </div>
       ))}
     </Container>

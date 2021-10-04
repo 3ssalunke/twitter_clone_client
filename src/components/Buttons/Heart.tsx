@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as activeHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as nonActiveHeart } from '@fortawesome/free-regular-svg-icons';
+import axios from 'axios';
 
 const Container = styled.div`
   position: relative;
@@ -35,37 +36,62 @@ interface IHeartProps {
   like: string[];
   isLogin: boolean;
   showCount: boolean;
+  tweet_id?: number;
+  onChangeTimeLine?: any;
 }
 
 export default function Heart({
   user_id,
   like,
   isLogin,
+  tweet_id,
   showCount,
+  onChangeTimeLine,
 }: IHeartProps) {
   const isActive = useMemo(() => {
-    if (like.includes(user_id)) {
-      return true;
+    if (like) {
+      if (like.includes(user_id)) {
+        return true;
+      } else return false;
     } else return false;
   }, [user_id, like]);
   const like_count = useMemo(() => {
-    return like.length;
+    if (like) return like.length;
+    else return 0;
   }, [like]);
 
-  const onChangeHeart = useCallback(() => {
-    if (!isLogin) {
-      alert('로그인 후 이용할 수 있습니다.');
-    } else {
-      console.log('test');
-    }
-  }, [isLogin]);
+  const onChangeLike = useCallback(
+    async (e: React.MouseEvent<SVGSVGElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isLogin) {
+        alert('로그인 후 이용할 수 있습니다.');
+        return;
+      }
+      try {
+        const apiUrl = isActive ? '/tweet/undo-like' : '/tweet/do-like';
+        await axios.patch(apiUrl, { tweet_id });
+
+        onChangeTimeLine();
+        return;
+      } catch (error: any) {
+        console.log(error);
+        console.log(error?.response?.data);
+        console.log(error?.response?.status);
+        console.log(error?.response?.headers);
+        alert(error?.response?.data);
+        return;
+      }
+    },
+    [isActive, isLogin, onChangeTimeLine, tweet_id]
+  );
 
   return (
     <Container>
       <Icon
         isactive={isActive}
         icon={isActive ? activeHeart : nonActiveHeart}
-        onClick={onChangeHeart}
+        onClick={onChangeLike}
       />
       {showCount && (
         <CountWrapper>
