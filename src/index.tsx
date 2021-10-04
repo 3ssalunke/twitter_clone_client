@@ -9,7 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './context/AuthContext';
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://localhost:80/api';
+axios.defaults.baseURL = '/api';
 // axios.defaults.baseURL = 'http://localhost:5000/api';
 
 ReactDOM.render(
