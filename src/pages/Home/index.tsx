@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { ITweet } from '../../types';
+import useSWR, { useSWRConfig } from 'swr';
 import TweetList from '../../components/Tweet/TweetList';
 import AddTweet from './AddTweet';
 import { useAuthContext } from '../../context/AuthContext';
@@ -18,46 +18,48 @@ const Container = styled.div`
 
 export default function Home() {
   const history = useHistory();
-  const [tweetList, setTweetList] = useState<ITweet[]>([]);
-  const [loading, setLoading] = useState(true);
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
-  // useSWR?
-  const getHomeTImeLine = useCallback(async () => {
-    try {
-      const response = await axios.get('/reading/home');
-      console.log('홈', response.data);
-      setTweetList(response.data);
-      setLoading(false);
-      return;
-    } catch (error) {
-      console.log('에러', error);
-      setLoading(false);
-      return;
-    }
-  }, []);
+  const { mutate } = useSWRConfig();
+  const { data, error } = useSWR('/reading/home', (url) =>
+    axios.get(url).then((res) => res.data)
+  );
+
+  const onChangeTimeLine = useCallback(() => {
+    mutate('/reading/home');
+    return;
+  }, [mutate]);
 
   useEffect(() => {
-    if (authStore.isLogin) {
-      getHomeTImeLine();
-    } else {
+    if (!authStore.isLogin) {
       history.push('/login');
     }
-  }, [authStore, getHomeTImeLine, history]);
+  }, [authStore, history]);
 
-  if (loading) return <></>;
+  if (!data) return <></>;
+  if (error)
+    return (
+      <Container>
+        <Header isLogin={authStore?.isLogin} />
+        <h5 style={{ marginTop: 30 }}>에러가 발생했습니다.</h5>
+      </Container>
+    );
   return (
     <Container>
       <Header isLogin={authStore?.isLogin} />
       {/* {authStore?.isLogin && (
         )} */}
-      <AddTweet profile_color={authStore?.user?.profile_color} />
+      <AddTweet
+        profile_color={authStore?.user?.profile_color}
+        onChangeTimeLine={onChangeTimeLine}
+      />
       {/* @ts-ignore */}
-      {tweetList.length === 0 && <h5>타임라인에 트윗이 없습니다.</h5>}
+      {data && data.length === 0 && <h5>타임라인에 트윗이 없습니다.</h5>}
       <TweetList
-        data={tweetList}
+        data={data}
         user_id={authStore?.user?.user_id}
         isLogin={authStore?.isLogin}
+        onChangeTimeLine={onChangeTimeLine}
       />
     </Container>
   );

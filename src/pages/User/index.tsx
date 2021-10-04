@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ITweet, IUser } from '../../types';
+import useSWR, { useSWRConfig, SWRConfig } from 'swr';
 import { useAuthContext } from '../../context/AuthContext';
 import TweetList from '../../components/Tweet/TweetList';
 import Header from '../../components/Header/Header';
@@ -17,62 +17,85 @@ const Container = styled.div`
 
 export default function User() {
   const params: { userid: string } = useParams();
-  const [userInfo, setUserInfo] = useState<IUser>({
-    user_id: '',
-    name: '',
-    profile_color: '',
-    description: '',
-    follower: [],
-    following: [],
-    follower_count: 0,
-    following_count: 0,
-  });
-  const [tweetList, setTweetList] = useState<ITweet[]>([]);
-  const [loading, setLoading] = useState(true);
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
+  const { mutate } = useSWRConfig();
+  const { data, error } = useSWR(`/reading/timeline/${params.userid}`, (url) =>
+    axios.get(url).then((res) => res.data)
+  );
 
-  const getUserTimeLine = useCallback(async () => {
-    try {
-      const response = await axios.get(`/reading/timeline/${params.userid}`);
-      console.log('결과::', response.data);
-      setTweetList(response.data?.timeLine);
-      setUserInfo(response.data?.user);
-      setLoading(false);
-      return;
-    } catch (error) {
-      console.log('에러');
-      return;
-    }
-  }, [params.userid]);
+  const onChangeFollowStatus = useCallback(
+    async (apiUrl) => {
+      try {
+        await axios.patch(`/user/${apiUrl}`, {
+          target_user_id: data?.user.user_id,
+        });
+        return;
+      } catch (error: any) {
+        throw error;
+      }
+    },
+    [data?.user.user_id]
+  );
 
-  useEffect(() => {
-    getUserTimeLine();
-  }, [getUserTimeLine]);
+  const onChangeFollow = useCallback(
+    async (apiUrl: 'unfollow-user' | 'follow-user') => {
+      try {
+        await onChangeFollowStatus(apiUrl);
+        mutate(`/reading/timeline/${params.userid}`);
+        return;
+      } catch (error: any) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        alert(error.response.data);
+        return;
+      }
+    },
+    [mutate, onChangeFollowStatus, params.userid]
+  );
 
-  if (loading) return <></>;
+  const onChangeTimeLine = useCallback(() => {
+    mutate(`/reading/timeline/${params.userid}`);
+    return;
+  }, [mutate, params.userid]);
+
+  if (!data) return <></>;
+  if (error)
+    return (
+      <Container>
+        <Header isLogin={authStore?.isLogin} />
+        <div style={{ marginTop: 10 }}>
+          <h5>에러가 발생했습니다.</h5>
+        </div>
+      </Container>
+    );
 
   return (
-    <Container>
-      <Header isLogin={authStore?.isLogin} />
-      <UserProfile
-        login_user_id={authStore?.user?.user_id}
-        user_id={userInfo.user_id}
-        name={userInfo.name}
-        profile_color={userInfo.profile_color}
-        description={userInfo.description}
-        following={userInfo.following}
-        follower={userInfo.follower}
-        follower_count={userInfo.follower_count}
-        following_count={userInfo.following_count}
-        isLoginedUserProfile={authStore?.user?.user_id === userInfo.user_id}
-      />
-      {tweetList.length === 0 && <h5>타임라인에 트윗이 없습니다.</h5>}
-      <TweetList
-        data={tweetList}
-        user_id={authStore?.user?.user_id}
-        isLogin={authStore?.isLogin}
-      />
-    </Container>
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <Container>
+        <Header isLogin={authStore?.isLogin} />
+        <UserProfile
+          login_user_id={authStore?.user?.user_id}
+          user_id={data?.user.user_id}
+          name={data?.user.name}
+          profile_color={data?.user.profile_color}
+          description={data?.user.description}
+          following={data?.user.following}
+          follower={data?.user.follower}
+          follower_count={data?.follower_count}
+          following_count={data?.following_count}
+          isLoginedUserProfile={authStore?.user?.user_id === data?.user.user_id}
+          onChangeFollow={onChangeFollow}
+        />
+        {data?.timeLine.length === 0 && <h5>타임라인에 트윗이 없습니다.</h5>}
+        <TweetList
+          data={data?.timeLine}
+          user_id={authStore?.user?.user_id}
+          isLogin={authStore?.isLogin}
+          onChangeTimeLine={onChangeTimeLine}
+        />
+      </Container>
+    </SWRConfig>
   );
 }

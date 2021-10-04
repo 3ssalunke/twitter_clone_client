@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
 import Header from '../../components/Header/Header';
 import { useAuthContext } from '../../context/AuthContext';
 import DetailTweet from '../../components/Tweet/DetailTweet';
-import { ITweet } from '../../types';
 import AddComment from './AddComment';
 import TweetList from '../../components/Tweet/TweetList';
 
@@ -23,69 +23,27 @@ const Wrapper = styled.div`
 `;
 
 export default function Tweet() {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [firstTweet, setFirstTweet] = useState<ITweet>({
-    tweet_id: 0,
-    user_id: '',
-    video: null,
-    image: [],
-    contents: '',
-    create_date: '',
-    retweet: [],
-    retweet_count: 0,
-    like: [],
-    like_count: 0,
-    comments: [],
-    comments_count: 0,
-    is_active: false,
-    user: {
-      name: '',
-      user_id: '',
-      profile_color: '',
-      description: '',
-      follower: [],
-      following: [],
-      follower_count: 0,
-      following_count: 0,
-    },
-  });
-  const [comments, setComments] = useState<ITweet[]>([]);
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
   const params: { user: string; tweetid: string } = useParams();
+  const { mutate } = useSWRConfig();
+  const { data, error } = useSWR(`/reading/${params.tweetid}`, (url) =>
+    axios.get(url).then((res) => res.data)
+  );
 
-  const getDetailTweet = useCallback(async () => {
-    try {
-      const response = await axios.get(`/reading/${params.tweetid}`);
-      console.log('결과: ', response.data);
-      setFirstTweet(response.data.origin);
-      setComments(response.data.comments);
-
-      setLoading(false);
-      return;
-    } catch (error) {
-      console.log('error', error);
-      return;
-    }
-  }, [params.tweetid]);
-  const history = useHistory();
-  const refreshComment = useCallback(() => {
-    // 답글을 작성한 후 실행합니다.
-    history.go(0);
+  const onChangeTweet = useCallback(() => {
+    // 답글을 작성한 후 트윗을 갱신합니다.
+    mutate(`/reading/${params.tweetid}`);
     return;
-  }, [history]);
+  }, [mutate, params.tweetid]);
 
-  useEffect(() => {
-    getDetailTweet();
-  }, [getDetailTweet]);
-
-  if (loading)
+  if (!data) return <></>;
+  if (error)
     return (
       <Container>
         <Header isLogin={authStore?.isLogin} />
         <Wrapper>
-          <h5 style={{ marginTop: 30 }}>{errorMessage}</h5>
+          <h5 style={{ marginTop: 30 }}>에러가 발생했습니다.</h5>
         </Wrapper>
       </Container>
     );
@@ -95,22 +53,24 @@ export default function Tweet() {
       <Header isLogin={authStore?.isLogin} />
       <Wrapper>
         <DetailTweet
-          value={firstTweet}
+          value={data?.origin}
           user_id={authStore?.user?.user_id}
           isLogin={authStore?.isLogin}
+          onChangeTweet={onChangeTweet}
         />
         {authStore?.isLogin && (
           <AddComment
             profile_color={authStore?.user?.profile_color}
-            target_tweet_id={firstTweet.tweet_id}
-            refreshComment={refreshComment}
+            target_tweet_id={data?.origin?.tweet_id}
+            onChangeTweet={onChangeTweet}
           />
         )}
         {/* comments 에다 각각 작은트윗 불러오기 */}
         <TweetList
-          data={comments}
+          data={data?.comments}
           user_id={authStore?.user?.user_id}
           isLogin={authStore?.isLogin}
+          onChangeTimeLine={onChangeTweet}
         />
       </Wrapper>
     </Container>
