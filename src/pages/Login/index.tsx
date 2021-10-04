@@ -59,17 +59,16 @@ export default function Login() {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       try {
-        // const response = await axios.post('/auth/login', {
-        //   email: 'test@g.com',
-        //   password: '123',
-        // });
         const response = await axios.post('/auth/login', { email, password });
-        console.log('response', response.data);
+        // console.log('response', response.data);
         authDispatch({ type: 'LOGIN', payload: response.data });
 
         return history.push('/home');
-      } catch (error) {
-        console.log('에러', error);
+      } catch (error: any) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        alert(error.response.data);
         return;
       }
     },
