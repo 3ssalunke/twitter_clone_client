@@ -59,6 +59,7 @@ interface IUserProfileProps {
   follower_count: number;
   following_count: number;
   isLoginedUserProfile?: boolean;
+  onChangeStatus?: any;
 }
 export default function UserProfile({
   login_user_id,
@@ -70,6 +71,7 @@ export default function UserProfile({
   follower_count,
   following_count,
   isLoginedUserProfile,
+  onChangeStatus,
 }: IUserProfileProps) {
   return (
     <Container>
@@ -89,6 +91,7 @@ export default function UserProfile({
             isLoginedUserProfile={isLoginedUserProfile}
             follower={follower}
             login_user_id={login_user_id}
+            onChangeStatus={onChangeStatus}
           />
         </FollowButtonWrapper>
       </ProfileWrapper>

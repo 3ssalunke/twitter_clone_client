@@ -41,6 +41,7 @@ interface IFollowButtonProps {
   target_user_id: string;
   follower: string[];
   isLoginedUserProfile?: boolean;
+  onChangeStatus?: any;
 }
 
 export default function FollowButton({
@@ -48,6 +49,7 @@ export default function FollowButton({
   target_user_id,
   follower,
   isLoginedUserProfile,
+  onChangeStatus,
 }: IFollowButtonProps) {
   const history = useHistory();
   const isFollow = useMemo(() => {
@@ -56,23 +58,34 @@ export default function FollowButton({
       return true;
     } else return false;
   }, [follower, login_user_id]);
-  const onClickFollowButton = useCallback(
-    async (e: React.MouseEvent<HTMLElement>) => {
-      e.preventDefault();
-      try {
-        const apiUrl = isFollow ? 'unfollow-user' : 'follow-user';
+  // const onClickFollowButton = useCallback(
+  //   async (e: React.MouseEvent<HTMLElement>) => {
+  //     e.preventDefault();
+  //     const apiUrl = isFollow ? 'unfollow-user' : 'follow-user';
+  //     console.log('버튼 클릭 시작');
+  //     await onChangeFollow(apiUrl);
+  //     return;
+  //   },
+  //   [isFollow, onChangeFollow]
+  // );
 
-        await axios.patch(`/user/${apiUrl}`, { target_user_id });
-        history.go(0);
-        return;
-      } catch (error: any) {
-        console.log('에러', error?.response?.status, error?.response);
+  const onChangeFollowStatus = useCallback(async () => {
+    try {
+      const apiUrl = isFollow ? 'unfollow-user' : 'follow-user';
+      await axios.patch(`/user/${apiUrl}`, {
+        target_user_id,
+      });
+      onChangeStatus();
+      return;
+    } catch (error: any) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      alert(error.response.data);
+      return;
+    }
+  }, [isFollow, onChangeStatus, target_user_id]);
 
-        return;
-      }
-    },
-    [history, isFollow, target_user_id]
-  );
   const moveToEditPage = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
@@ -89,7 +102,7 @@ export default function FollowButton({
           <span>프로필 수정</span>
         </ProfileEditButton>
       ) : (
-        <Button isFollow={isFollow} onClick={onClickFollowButton}>
+        <Button isFollow={isFollow} onClick={onChangeFollowStatus}>
           {isFollow ? '팔로잉' : '팔로우'}
         </Button>
       )}

@@ -24,37 +24,6 @@ export default function User() {
     axios.get(url).then((res) => res.data)
   );
 
-  const onChangeFollowStatus = useCallback(
-    async (apiUrl) => {
-      try {
-        await axios.patch(`/user/${apiUrl}`, {
-          target_user_id: data?.user.user_id,
-        });
-        return;
-      } catch (error: any) {
-        throw error;
-      }
-    },
-    [data?.user.user_id]
-  );
-
-  const onChangeFollow = useCallback(
-    async (apiUrl: 'unfollow-user' | 'follow-user') => {
-      try {
-        await onChangeFollowStatus(apiUrl);
-        mutate(`/reading/timeline/${params.userid}`);
-        return;
-      } catch (error: any) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-        alert(error.response.data);
-        return;
-      }
-    },
-    [mutate, onChangeFollowStatus, params.userid]
-  );
-
   const onChangeTimeLine = useCallback(() => {
     mutate(`/reading/timeline/${params.userid}`);
     return;
@@ -86,7 +55,7 @@ export default function User() {
           follower_count={data?.follower_count}
           following_count={data?.following_count}
           isLoginedUserProfile={authStore?.user?.user_id === data?.user.user_id}
-          onChangeFollow={onChangeFollow}
+          onChangeStatus={onChangeTimeLine}
         />
         {data?.timeLine.length === 0 && <h5>타임라인에 트윗이 없습니다.</h5>}
         <TweetList
