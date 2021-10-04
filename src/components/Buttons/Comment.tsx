@@ -29,8 +29,10 @@ interface IComment {
 
 export default function Comment({ comments, showCount }: IComment) {
   const comments_count = useMemo(() => {
-    return comments.length;
+    if (comments) return comments.length;
+    else return 0;
   }, [comments]);
+
   return (
     <Container>
       <Icon icon={faComment} />
