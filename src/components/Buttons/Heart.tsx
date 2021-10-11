@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as activeHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as nonActiveHeart } from '@fortawesome/free-regular-svg-icons';
@@ -12,15 +12,19 @@ const Container = styled.div`
   text-align: center;
   cursor: pointer;
 `;
-
-const Icon = styled(FontAwesomeIcon)<{ isactive: boolean }>`
+const IconButton = styled.button`
+  width: 30%;
+  margin: 0 auto;
+  border: none;
+  border-radius: 9999px;
+  background-color: transparent;
+  &:hover {
+    background-color: rgba(249, 24, 128, 0.1);
+  }
+`;
+const Icon = styled(FontAwesomeIcon)`
   font-size: 1rem;
   cursor: pointer;
-  ${(props) =>
-    props.isactive &&
-    css`
-      color: #f91880;
-    `}
 `;
 
 const CountWrapper = styled.div`
@@ -61,7 +65,7 @@ export default function Heart({
   }, [like]);
 
   const onChangeLike = useCallback(
-    async (e: React.MouseEvent<SVGSVGElement>) => {
+    async (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
       e.stopPropagation();
       if (!isLogin) {
@@ -88,11 +92,13 @@ export default function Heart({
 
   return (
     <Container>
-      <Icon
-        isactive={isActive}
-        icon={isActive ? activeHeart : nonActiveHeart}
-        onClick={onChangeLike}
-      />
+      <IconButton onClick={onChangeLike}>
+        <Icon
+          color={isActive ? '#f91880' : 'black'}
+          icon={isActive ? activeHeart : nonActiveHeart}
+        />
+      </IconButton>
+
       {showCount && (
         <CountWrapper>
           {like_count > 0 ? <span>{like_count}</span> : <></>}

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRetweet } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -11,15 +11,18 @@ const Container = styled.div`
   text-align: center;
   cursor: pointer;
 `;
-
-const Icon = styled(FontAwesomeIcon)<{ isactive: boolean }>`
+const IconButton = styled.button`
+  width: 30%;
+  margin: 0 auto;
+  border: none;
+  border-radius: 9999px;
+  background-color: transparent;
+  &:hover {
+    background-color: rgba(0, 186, 124, 0.1);
+  }
+`;
+const Icon = styled(FontAwesomeIcon)`
   font-size: 1rem;
-  cursor: pointer;
-  ${(props) =>
-    props.isactive &&
-    css`
-      color: green;
-    `}
 `;
 
 const CountWrapper = styled.div`
@@ -60,7 +63,7 @@ export default function Retweet({
   }, [retweet]);
 
   const onChangeRetweet = useCallback(
-    async (e: React.MouseEvent<SVGSVGElement>) => {
+    async (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
       e.stopPropagation();
       if (!isLogin) {
@@ -87,7 +90,10 @@ export default function Retweet({
 
   return (
     <Container>
-      <Icon isactive={isActive} icon={faRetweet} onClick={onChangeRetweet} />
+      <IconButton onClick={onChangeRetweet}>
+        <Icon color={isActive ? 'green' : 'black'} icon={faRetweet} />
+      </IconButton>
+
       {showCount && (
         <CountWrapper>
           {retweet_count > 0 ? <span>{retweet_count}</span> : <></>}
