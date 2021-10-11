@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -30,7 +31,9 @@ export default function Share() {
     e.preventDefault();
     // 출처: https://stackoverflow.com/a/52033479
     navigator.clipboard.writeText(window.location.href);
-    alert('링크를 클립보드에 복사했습니다.');
+    toast('링크를 클립보드에 복사했습니다.', {
+      position: toast.POSITION.BOTTOM_CENTER,
+    });
     return;
   }, []);
   return (

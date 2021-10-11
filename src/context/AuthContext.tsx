@@ -62,7 +62,7 @@ const authReducer = (prevState, action) => {
   }
 };
 
-export function AuthProvider({ children }: { children: React.ReactChild }) {
+export function AuthProvider({ children }: { children: React.ReactChild[] }) {
   const [store, authDispath] = useReducer(authReducer, initialState);
   return (
     // @ts-ignore
