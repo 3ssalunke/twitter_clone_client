@@ -46,10 +46,13 @@ export default function Login() {
   const [authStore, authDispatch] = useAuthContext();
   const [loading, setLoading] = useState(true);
 
-  const inputUserId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    seEmail(e.target.value);
-  }, []);
-  const inputPassword = useCallback(
+  const onChangeUserId = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      seEmail(e.target.value);
+    },
+    []
+  );
+  const onChangePassword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(e.target.value);
     },
@@ -98,13 +101,13 @@ export default function Login() {
             placeholder="이메일를 입력하세요"
             value={email}
             type="text"
-            onChange={inputUserId}
+            onChange={onChangeUserId}
           />
           <AuthInput
             placeholder="비밀번호를 입력하세요"
             value={password}
             type="password"
-            onChange={inputPassword}
+            onChange={onChangePassword}
           />
           <AuthButton text="로그인" onClick={onSubmit} />
           <JoinWrapper>
