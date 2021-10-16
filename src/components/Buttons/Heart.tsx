@@ -73,8 +73,8 @@ export default function Heart({
         return;
       }
       try {
-        const apiUrl = isActive ? '/tweet/undo-like' : '/tweet/do-like';
-        await axios.patch(apiUrl, { tweet_id });
+        if (isActive) await axios.delete(`/tweets/like/${tweet_id}`);
+        else await axios.post('/tweets/like', { tweet_id });
 
         onChangeTimeLine();
         return;

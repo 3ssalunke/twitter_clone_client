@@ -71,8 +71,8 @@ export default function Retweet({
         return;
       }
       try {
-        const apiUrl = isActive ? '/tweet/undo-retweet' : '/tweet/do-retweet';
-        await axios.patch(apiUrl, { tweet_id });
+        if (isActive) await axios.delete(`/tweets/retweet/${tweet_id}`);
+        else await axios.post('/tweets/retweet', { tweet_id });
 
         onChangeTimeLine();
         return;

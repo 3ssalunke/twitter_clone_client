@@ -20,12 +20,12 @@ export default function User() {
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
   const { mutate } = useSWRConfig();
-  const { data, error } = useSWR(`/reading/timeline/${params.userid}`, (url) =>
+  const { data, error } = useSWR(`/timelines/${params.userid}`, (url) =>
     axios.get(url).then((res) => res.data)
   );
 
   const onChangeTimeLine = useCallback(() => {
-    mutate(`/reading/timeline/${params.userid}`);
+    mutate(`/timelines/${params.userid}`);
     return;
   }, [mutate, params.userid]);
 

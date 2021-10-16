@@ -21,12 +21,12 @@ export default function Home() {
   // @ts-ignore
   const [authStore, authDispatch] = useAuthContext();
   const { mutate } = useSWRConfig();
-  const { data, error } = useSWR('/reading/home', (url) =>
+  const { data, error } = useSWR('/timelines', (url) =>
     axios.get(url).then((res) => res.data)
   );
 
   const onChangeTimeLine = useCallback(() => {
-    mutate('/reading/home');
+    mutate('/timelines');
     return;
   }, [mutate]);
 

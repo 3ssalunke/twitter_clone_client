@@ -74,7 +74,7 @@ export default function AddComment({
   const onSubmit = useCallback(async () => {
     try {
       const tweet_id = createRandomTweetId();
-      await axios.post('/tweet/add-comment', {
+      await axios.post('/tweets/comment', {
         tweet_id,
         contents,
         target_tweet_id,
@@ -89,7 +89,7 @@ export default function AddComment({
       alert(error.response.data);
       return;
     }
-  }, [contents, onChangeTweet]);
+  }, [contents, onChangeTweet, target_tweet_id]);
 
   return (
     <Container>

@@ -27,13 +27,13 @@ export default function Tweet() {
   const [authStore, authDispatch] = useAuthContext();
   const params: { user: string; tweetid: string } = useParams();
   const { mutate } = useSWRConfig();
-  const { data, error } = useSWR(`/reading/${params.tweetid}`, (url) =>
+  const { data, error } = useSWR(`/tweets/${params.tweetid}`, (url) =>
     axios.get(url).then((res) => res.data)
   );
 
   const onChangeTweet = useCallback(() => {
     // 답글을 작성한 후 트윗을 갱신합니다.
-    mutate(`/reading/${params.tweetid}`);
+    mutate(`/tweets/${params.tweetid}`);
     return;
   }, [mutate, params.tweetid]);
 

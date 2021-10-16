@@ -28,7 +28,7 @@ export default function LogoutButton() {
 
   const onStartLogout = useCallback(async () => {
     try {
-      const response = await axios.get('/auth/logout');
+      const response = await axios.post('/auth/logout');
       console.log('로그아웃 결과', response.data);
       authDispatch({ type: 'LOGOUT' });
       history.push('/login');

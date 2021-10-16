@@ -58,23 +58,11 @@ export default function FollowButton({
       return true;
     } else return false;
   }, [follower, login_user_id]);
-  // const onClickFollowButton = useCallback(
-  //   async (e: React.MouseEvent<HTMLElement>) => {
-  //     e.preventDefault();
-  //     const apiUrl = isFollow ? 'unfollow-user' : 'follow-user';
-  //     console.log('버튼 클릭 시작');
-  //     await onChangeFollow(apiUrl);
-  //     return;
-  //   },
-  //   [isFollow, onChangeFollow]
-  // );
 
   const onChangeFollowStatus = useCallback(async () => {
     try {
-      const apiUrl = isFollow ? 'unfollow-user' : 'follow-user';
-      await axios.patch(`/user/${apiUrl}`, {
-        target_user_id,
-      });
+      if (isFollow) await axios.patch('/users/unfollow', { target_user_id });
+      else await axios.patch('/users/follow', { target_user_id });
       onChangeStatus();
       return;
     } catch (error: any) {

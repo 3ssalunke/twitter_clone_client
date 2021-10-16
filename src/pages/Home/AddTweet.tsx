@@ -71,7 +71,7 @@ export default function AddTweet({
   const onSubmit = useCallback(async () => {
     try {
       const tweet_id = createRandomTweetId();
-      await axios.post('/tweet/create', { tweet_id, contents });
+      await axios.post('/tweets', { tweet_id, contents });
       onChangeTimeLine();
       setContents('');
       return;
