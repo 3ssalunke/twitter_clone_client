@@ -29,6 +29,7 @@ const Icon = styled(FontAwesomeIcon)`
 export default function Share() {
   const onCopyUrl = useCallback((e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     // 출처: https://stackoverflow.com/a/52033479
     navigator.clipboard.writeText(window.location.href);
     toast('링크를 클립보드에 복사했습니다.', {
