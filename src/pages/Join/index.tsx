@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import logo from '../../assets/Logo blue.svg';
 import AuthButton from '../../components/AuthButton';
 import AuthInput from '../../components/AuthInput';
+import EditProfile from '../../components/Buttons/EditProfile';
 
 const Container = styled.div`
   position: relative;
@@ -56,6 +57,9 @@ export default function Join() {
     },
     []
   );
+  const onChangeColor = useCallback((color: string) => {
+    setProfileColor(color);
+  }, []);
 
   const onSubmit = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +91,7 @@ export default function Join() {
       <WrapperDiv>
         <LogoSvg src={logo} />
         <form>
+          <EditProfile color={profileColor} onChangeColor={onChangeColor} />
           <AuthInput
             placeholder="아이디를 입력하세요"
             value={userId}
