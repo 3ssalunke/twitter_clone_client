@@ -43,10 +43,10 @@ export default function ProfileImage({
   const history = useHistory();
   const moveToUserTimeLine = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
       // AddTweet, AddComment 에서는 이동하지 않도록 막기 위해서 조건문을 추가했습니다.
       if (user_id) {
-        e.preventDefault();
-        e.stopPropagation();
         history.push(`/${user_id}`);
         return;
       } else return;
